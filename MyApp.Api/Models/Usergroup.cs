@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 namespace MyApp.Api.Models
 {
     public class UserGroup
@@ -6,8 +7,9 @@ namespace MyApp.Api.Models
         public int UserId { get; set; }
         public User User { get; set; } = null!;
         public int GroupId { get; set; }
+
+        [JsonIgnore]
         public Group Group { get; set; } = null!;
 
-        public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
     }
 }

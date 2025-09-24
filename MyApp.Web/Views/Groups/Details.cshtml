@@ -1,0 +1,32 @@
+@model MyApp.Web.Models.GroupDetailsViewModel
+
+<h2>@Model.Group.Name</h2> <!-- ✅ accessing Group.Name -->
+
+<h3>Members</h3>
+<ul>
+@foreach (var user in Model.Members){<!-- ✅ accessing Members from ViewModel -->
+    
+    <li>
+        @user.Username <!-- ✅ accessing User.Username -->
+        <form asp-action="RemoveMember" method="post" style="display:inline">
+            <input type="hidden" name="groupId" value="@Model.Group.Id" />
+            <input type="hidden" name="userId" value="@user.Id" />
+            <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+        </form>
+    </li>
+}  
+
+
+</ul>
+
+<form asp-controller="Group" asp-action="AddMember" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="groupId" value="@Model.Group.Id" />
+    <select name="userId" class="form-control">
+        @foreach (var user in Model.AvailableUsers) // you may need to load this list
+        {
+            <option value="@user.Id">@user.Username</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>

@@ -1,15 +1,27 @@
 using MyApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+     .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerGeneratorOptions = new Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions
+    {
+        // This forces swagger to throw instead of silently dropping controllers
+        IgnoreObsoleteActions = false
+    };
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -40,7 +52,14 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+app.MapControllers();
+var controllers = typeof(Program).Assembly.GetTypes()
+    .Where(t => typeof(ControllerBase).IsAssignableFrom(t))
+    .Select(t => t.FullName);
 
+Console.WriteLine("🚀 Controllers discovered at startup:");
+foreach (var c in controllers)
+    Console.WriteLine(c);
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

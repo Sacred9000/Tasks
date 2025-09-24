@@ -29,7 +29,6 @@ namespace MyApp.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -64,7 +63,7 @@ namespace MyApp.Api.Migrations
                     b.Property<int>("PermissionId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("GrantedAt")
+                    b.Property<DateTime?>("GrantedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("GroupId", "PermissionId");
@@ -108,12 +107,14 @@ namespace MyApp.Api.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("GroupId1")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "GroupId");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("GroupId1");
 
                     b.ToTable("UserGroups");
                 });
@@ -140,13 +141,17 @@ namespace MyApp.Api.Migrations
             modelBuilder.Entity("MyApp.Api.Models.UserGroup", b =>
                 {
                     b.HasOne("MyApp.Api.Models.Group", "Group")
-                        .WithMany("UserGroup")
+                        .WithMany("UserGroups")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MyApp.Api.Models.Group", null)
+                        .WithMany("UserGroup")
+                        .HasForeignKey("GroupId1");
+
                     b.HasOne("MyApp.Api.Models.User", "User")
-                        .WithMany()
+                        .WithMany("UserGroup")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -160,6 +165,13 @@ namespace MyApp.Api.Migrations
                 {
                     b.Navigation("PermissionsGroup");
 
+                    b.Navigation("UserGroup");
+
+                    b.Navigation("UserGroups");
+                });
+
+            modelBuilder.Entity("MyApp.Api.Models.User", b =>
+                {
                     b.Navigation("UserGroup");
                 });
 #pragma warning restore 612, 618

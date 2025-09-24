@@ -5,7 +5,7 @@ namespace MyApp.Api.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Group> Groups { get; set; } = null!;
@@ -22,7 +22,23 @@ namespace MyApp.Api.Data
             modelBuilder.Entity<PermissionsGroup>()
                 .HasKey(gp => new { gp.GroupId, gp.PermissionId });
 
+            // User ↔ UserGroup
+            modelBuilder.Entity<UserGroup>()
+            .HasOne(ug => ug.User)
+            .WithMany(u => u.UserGroup)
+            .HasForeignKey(ug => ug.UserId);
+
+            // Group ↔ UserGroup
+            modelBuilder.Entity<UserGroup>()
+           .HasOne(ug => ug.Group)
+           .WithMany(g => g.UserGroups)
+           .HasForeignKey(ug => ug.GroupId);
+            
             base.OnModelCreating(modelBuilder);
         }
+
+            
+        }
+    
+
     }
-}

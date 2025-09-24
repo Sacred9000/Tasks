@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace MyApp.Api.Models
 {
+
     public class User
     {
         public int Id { get; set; }
@@ -13,5 +14,10 @@ namespace MyApp.Api.Models
         public string Usersurname { get; set; } = null!;
         [MaxLength(100)]
         public string Email { get; set; } = null!;
+    
+    public ICollection<UserGroup> UserGroup { get; set; } = new List<UserGroup>();
+
     }
+
+
 }

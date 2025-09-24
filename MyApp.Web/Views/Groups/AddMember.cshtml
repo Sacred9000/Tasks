@@ -1,0 +1,21 @@
+@model MyApp.Web.Models.AddMemberViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<h2>Add Member</h2>
+
+<form asp-controller="Groups" asp-action="AddMember" method="post">
+    <input type="hidden" asp-for="GroupId" />
+
+    <div class="form-group">
+        <label asp-for="SelectedUserId">Select User:</label>
+        <select asp-for="SelectedUserId"
+                asp-items="@(ViewBag.AllUsers as IEnumerable<SelectListItem>)"
+                class="form-control">
+            <option value="">-- Select a user --</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Add</button>
+</form>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
